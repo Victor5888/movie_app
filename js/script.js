@@ -7,6 +7,10 @@ async function displayMovieDetails() {
   const movieId = window.location.search.split('=')[1];
   const movie = await fetchAPIData(`movie/${movieId}`);
 
+  // overlay for background image
+
+  displayBackgroundImage('movie', movie.backdrop_path);
+
   const div = document.createElement('div');
   div.innerHTML = ` <div class="details-top">
           <div>
@@ -68,7 +72,68 @@ async function displayMovieDetails() {
         </div>`;
 
   document.querySelector('#movie-details').appendChild(div);
-  console.log(div);
+}
+
+//display TV show details
+async function displayShowDetails() {
+  const showID = window.location.search.split('='[1]);
+  const show = await fetchAPIData(`show/${showID}`);
+
+  const div = document.createElement('div');
+  div.innerHTML = `
+
+  
+        <div class="details-top">
+          <div>
+            <img
+              src="../images/no-image.jpg"
+              class="card-img-top"
+              alt="Show Name"
+            />
+          </div>
+          <div>
+            <h2>Show Name</h2>
+            <p>
+              <i class="fas fa-star text-primary"></i>
+              8 / 10
+            </p>
+            <p class="text-muted">Release Date: XX/XX/XXXX</p>
+            <p>
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo
+              aut, illum nesciunt esse cum tempora ipsa animi unde repellendus
+              recusandae, quidem libero labore beatae sint nostrum inventore!
+              Inventore libero sit exercitationem non magni odio nobis dolorum
+              quae, deserunt quo unde labore consequuntur amet voluptatum vitae
+              omnis dignissimos error quasi tempora?
+            </p>
+            <h5>Genres</h5>
+            <ul class="list-group">
+              <li>Genre 1</li>
+              <li>Genre 2</li>
+              <li>Genre 3</li>
+            </ul>
+            <a href="#" target="_blank" class="btn">Visit Show Homepage</a>
+          </div>
+        </div>
+        <div class="details-bottom">
+          <h2>Show Info</h2>
+          <ul>
+            <li><span class="text-secondary">Number Of Episodes:</span> 50</li>
+            <li>
+              <span class="text-secondary">Last Episode To Air:</span> Last
+              Aired Show Episode
+            </li>
+            <li><span class="text-secondary">Status:</span> Released</li>
+          </ul>
+          <h4>Production Companies</h4>
+          <div class="list-group">Company 1, Company 2, Company 3</div>
+        </div>
+     
+
+  
+  `;
+
+  document.querySelector('#show-details').appendChild(div);
 }
 
 // Display 20 most popular movies
@@ -147,6 +212,30 @@ async function displayTvShows() {
   });
 }
 
+//display backdrop on details page
+
+function displayBackgroundImage(type, backgroundPath) {
+  const overlayDiv = document.createElement('div');
+  overlayDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original/${backgroundPath})`;
+
+  overlayDiv.style.backgroundSize = 'cover';
+  overlayDiv.style.backgroundPosition = 'center';
+  overlayDiv.style.backgroundRepeat = 'no-repeat';
+  overlayDiv.style.height = '100vh';
+  overlayDiv.style.width = '100vw';
+  overlayDiv.style.position = 'absolute';
+  overlayDiv.style.top = '0';
+  overlayDiv.style.left = '0';
+  overlayDiv.style.zindex = '-1';
+  overlayDiv.style.opacity = '0.1';
+
+  if (type === 'movie') {
+    document.querySelector('#movie-details').appendChild(overlayDiv);
+  } else {
+    document.querySelector('#show-details').appendChild(overlayDiv);
+  }
+}
+
 // Fetch data from TMDB API
 async function fetchAPIData(endpoint) {
   // Register your key at https://www.themoviedb.org/settings/api and enter here
@@ -196,7 +285,7 @@ function init() {
       displayMovieDetails();
       break;
     case '/tv-details.html':
-      console.log('TV Details');
+      displayShowDetails();
       break;
     case '/search.html':
       console.log('Search');
