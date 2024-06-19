@@ -76,67 +76,77 @@ async function displayMovieDetails() {
 
 //display TV show details
 async function displayShowDetails() {
-  const showID = window.location.search.split('='[1]);
-  const show = await fetchAPIData(`show/${showID}`);
+  const showId = window.location.search.split('=')[1];
+  const show = await fetchAPIData(`tv/${showId}`);
+
+  // overlay for background image
+
+  displayBackgroundImage('show', show.backdrop_path);
 
   const div = document.createElement('div');
-  div.innerHTML = `
-
-  
-        <div class="details-top">
+  div.innerHTML = ` <div class="details-top">
           <div>
-            <img
-              src="../images/no-image.jpg"
-              class="card-img-top"
-              alt="Show Name"
-            />
+          ${
+            show.poster_path
+              ? `<img
+            src="https://image.tmdb.org/t/p/w500${show.poster_path}"
+            class="card-img-top"
+            alt="${show.name}"
+          />`
+              : `<img
+          src="../images/no-image.jpg"
+          class="card-img-top"
+          alt="${show.name}"
+        />`
+          }
           </div>
           <div>
-            <h2>Show Name</h2>
+            <h2>${show?.name}</h2>
             <p>
               <i class="fas fa-star text-primary"></i>
-              8 / 10
+            ${show.vote_average.toFixed(1)} / 10
             </p>
-            <p class="text-muted">Release Date: XX/XX/XXXX</p>
+            <p class="text-muted">Release Date: ${show.release_date}</p>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo
-              aut, illum nesciunt esse cum tempora ipsa animi unde repellendus
-              recusandae, quidem libero labore beatae sint nostrum inventore!
-              Inventore libero sit exercitationem non magni odio nobis dolorum
-              quae, deserunt quo unde labore consequuntur amet voluptatum vitae
-              omnis dignissimos error quasi tempora?
+              ${show?.overview}
             </p>
             <h5>Genres</h5>
             <ul class="list-group">
-              <li>Genre 1</li>
-              <li>Genre 2</li>
-              <li>Genre 3</li>
+              ${show.genres
+                .map(
+                  (genre) => `<li>${genre.name}
+                </li>`
+                )
+                .join('')}
             </ul>
-            <a href="#" target="_blank" class="btn">Visit Show Homepage</a>
+            <a href="#" target="_blank" class="btn">${show.homepage}</a>
           </div>
         </div>
         <div class="details-bottom">
-          <h2>Show Info</h2>
+          <h2>${show.overview}</h2>
           <ul>
-            <li><span class="text-secondary">Number Of Episodes:</span> 50</li>
-            <li>
-              <span class="text-secondary">Last Episode To Air:</span> Last
-              Aired Show Episode
-            </li>
-            <li><span class="text-secondary">Status:</span> Released</li>
+            <li><span class="text-secondary">Budget:</span>$${show.budget}</li>
+            <li><span class="text-secondary">Revenue:</span>$${
+              show.revenue
+            }</li>
+            <li><span class="text-secondary">Runtime:</span>${
+              show.runtime
+            } minutes</li>
+            <li><span class="text-secondary">Status:</span> ${show.status}</li>
           </ul>
           <h4>Production Companies</h4>
-          <div class="list-group">Company 1, Company 2, Company 3</div>
-        </div>
-     
-
-  
-  `;
+          <div class="list-group">
+          ${show.production_companies
+            .map((company) => `<span>${company.name} </span>`)
+            .join('')}
+          
+          </div>
+        </div>`;
 
   document.querySelector('#show-details').appendChild(div);
 }
 
-// Display 20 most popular movies
+// Display 20 most popular moviesss
 async function displayPopularMovies() {
   const { results } = await fetchAPIData('movie/popular');
 
@@ -239,7 +249,7 @@ function displayBackgroundImage(type, backgroundPath) {
 // Fetch data from TMDB API
 async function fetchAPIData(endpoint) {
   // Register your key at https://www.themoviedb.org/settings/api and enter here
-  // Only use this for development or very small projects. You should store your key and make requests from a server
+  // Only use this for development or very small projects. You should store your key and make requests from a servers
   const API_KEY = 'd929d789d20178123a1eab28fff9bce4';
   const API_URL = 'https://api.themoviedb.org/3/';
 
