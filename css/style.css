@@ -341,3 +341,12 @@ section h2 {
 .alert-error {
   background: red;
 }
+
+.swiper_card .swiper-slide {
+}
+.swiper_card .swiper-slide img {
+  height: 100%;
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
