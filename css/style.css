@@ -328,7 +328,6 @@ section h2 {
 
 /* Alert */
 .alert {
-  background: red;
   padding: 10px 20px;
   margin-bottom: 20px;
   border-radius: 5px;
@@ -342,8 +341,6 @@ section h2 {
   background: red;
 }
 
-.swiper_card .swiper-slide {
-}
 .swiper_card .swiper-slide img {
   height: 100%;
   width: 100%;

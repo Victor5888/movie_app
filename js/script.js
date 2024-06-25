@@ -260,9 +260,72 @@ async function search() {
   global.search.term = urlParams.get('search-term');
 
   if (global.search.term !== '' && global.search.term !== null) {
+    showAlert('success', 'alert-success');
     // make request and then display results
+    const { results, total_pages, page } = await searchApiData();
+    results.forEach((res) => {
+      const div = document.createElement('div');
+
+      div.classList.add('card');
+      if ((global.search.type = movie)) {
+        div.innerHTML = `
+      
+            <a href="#">
+               ${
+                 res.poster_path
+                   ? `<img
+              src="https://image.tmdb.org/t/p/w500${res.poster_path}"
+              class="card-img-top"
+              alt="${res.title}"
+            />`
+                   : `<img
+            src="../images/no-image.jpg"
+            class="card-img-top"
+            alt="${res.title}"
+          />`
+               }
+            </a>
+            <div class="card-body">
+              <h5 class="card-title">${res.title}</h5>
+              <p class="card-text">
+                <small class="text-muted">Release:${res.release_date} </small>
+              </p>
+            </div>
+          
+      `;
+      }
+      if ((global.search.type = tv)) {
+        div.innerHTML = `
+      
+            <a href="#">
+               ${
+                 res.poster_path
+                   ? `<img
+              src="https://image.tmdb.org/t/p/w500${res.poster_path}"
+              class="card-img-top"
+              alt="${res.name}"
+            />`
+                   : `<img
+            src="../images/no-image.jpg"
+            class="card-img-top"
+            alt="${res.name}"
+          />`
+               }
+            </a>
+            <div class="card-body">
+              <h5 class="card-title">${res.name}</h5>
+              <p class="card-text">
+                <small class="text-muted">Release:${res.first_air_date} </small>
+              </p>
+            </div>
+          
+      `;
+      }
+
+      document.querySelector('#search-results').appendChild(div);
+    });
   } else {
-    showAlert('please enter a keyword');
+    showAlert('please enter a keyword', 'alert');
   }
 }
 
@@ -313,6 +376,18 @@ async function fetchAPIData(endpoint) {
 
   const response = await fetch(
     `${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`
+  );
+  showSpinner();
+  const data = await response.json();
+  hideSpinner();
+  return data;
+}
+
+async function searchApiData() {
+  const API_KEY = 'd929d789d20178123a1eab28fff9bce4';
+  const API_URL = 'https://api.themoviedb.org/3/';
+  const response = await fetch(
+    `${API_URL}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}`
   );
   showSpinner();
   const data = await response.json();
