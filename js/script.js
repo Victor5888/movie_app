@@ -5,6 +5,7 @@ const global = {
     type: '',
     page: '1',
     totalPages: '1',
+    totalResults: 0,
   },
 };
 
@@ -262,15 +263,22 @@ async function search() {
   if (global.search.term !== '' && global.search.term !== null) {
     showAlert('success', 'alert-success');
     // make request and then display results
-    const { results, total_pages, page } = await searchApiData();
+    const { results, total_pages, page, total_results } = await searchApiData();
+    showSpinner();
+
+    global.search.page = page;
+    global.search.totalPages = total_pages;
+    global.search.totalResults = total_results;
+
     results.forEach((res) => {
+      hideSpinner();
       const div = document.createElement('div');
 
       div.classList.add('card');
-      if ((global.search.type = movie)) {
-        div.innerHTML = `
+
+      div.innerHTML = `
       
-            <a href="#">
+            <a href="${global.search.type}-details.html?id=${res.id}">
                ${
                  res.poster_path
                    ? `<img
@@ -286,41 +294,23 @@ async function search() {
                }
             </a>
             <div class="card-body">
-              <h5 class="card-title">${res.title}</h5>
+              <h5 class="card-title">${
+                global.search.type === 'movie' ? res.title : res.name
+              }</h5>
               <p class="card-text">
-                <small class="text-muted">Release:${res.release_date} </small>
+                <small class="text-muted">Release:${
+                  global.search.type === 'movie'
+                    ? res.release_date
+                    : res.first_air_date
+                } </small>
               </p>
             </div>
           
       `;
-      }
-      if ((global.search.type = tv)) {
-        div.innerHTML = `
-      
-            <a href="#">
-               ${
-                 res.poster_path
-                   ? `<img
-              src="https://image.tmdb.org/t/p/w500${res.poster_path}"
-              class="card-img-top"
-              alt="${res.name}"
-            />`
-                   : `<img
-            src="../images/no-image.jpg"
-            class="card-img-top"
-            alt="${res.name}"
-          />`
-               }
-            </a>
-            <div class="card-body">
-              <h5 class="card-title">${res.name}</h5>
-              <p class="card-text">
-                <small class="text-muted">Release:${res.first_air_date} </small>
-              </p>
-            </div>
-          
-      `;
-      }
+
+      document.querySelector(
+        '#search-results-heading'
+      ).innerHTML = `<h2>${results.length} of ${global.search.totalPages} of results</h2>`;
 
       document.querySelector('#search-results').appendChild(div);
     });
